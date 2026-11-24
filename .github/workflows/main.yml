@@ -1,18 +1,25 @@
 
-
 name: Gaming Shorts Automator
 
-'on':
+on:
   push:
-    branches: [main]
+    branches:
+      - main
+
   workflow_dispatch:
+    inputs:
+      video_url:
+        description: 'YouTube video URL'
+        required: true
+        type: string
+
   schedule:
     - cron: '0 12 * * *'
-
 
 jobs:
   run:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
