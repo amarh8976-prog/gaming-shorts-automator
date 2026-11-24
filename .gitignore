@@ -1,0 +1,23 @@
+
+# Private API credentials
+.env
+.env.*
+!.env.example
+client_secret*.json
+token.json
+credentials.json
+
+# Python temporary files
+__pycache__/
+*.pyc
+venv/
+.venv/
+
+# Video files
+videos/
+output/
+*.mp4
+*.mov
+
+# System files
+.DS_Store
