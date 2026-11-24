@@ -1,7 +1,8 @@
 
+
 name: Gaming Shorts Automator
 
-on:
+'on':
   workflow_dispatch:
   schedule:
     - cron: '0 12 * * *'
@@ -9,7 +10,6 @@ on:
 jobs:
   run:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
