@@ -29,8 +29,28 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Install FFmpeg
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
       - name: Run automation
+        env:
+          INPUT_VIDEO_URL: ${{ inputs.video_url }}
         run: python main.py
+
+      - name: Upload generated clips
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gaming-shorts-clips
+          path: output/clips/*.mp4
+          if-no-files-found: error
+          retention-days: 7
+
+
