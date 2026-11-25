@@ -33,7 +33,6 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y ffmpeg
-          which ffmpeg
           ffmpeg -version
 
       - name: Install dependencies
@@ -41,16 +40,27 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Install Deno
+        uses: denoland/setup-deno@v2
+
+      - name: Update yt-dlp
+        run: |
+          python -m pip install --upgrade yt-dlp
+
       - name: Run automation
-        if: github.event_name == 'workflow_dispatch'
         env:
           INPUT_VIDEO_URL: ${{ inputs.video_url }}
-        run: python main.py
+          CLIP_COUNT: '20'
+        run: |
+          python main.py
 
       - name: Upload generated clips
-        if: success()
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: gaming-shorts-clips
-          path: clips/
-          if-no-files-found: ignore
+          path: |
+            clips/
+            output/
+          if-no-files-found: warn
+          retention-days: 7
