@@ -40,17 +40,29 @@ jobs:
         run: |
           python -m pip install --upgrade yt-dlp
 
+      - name: Prepare YouTube cookies
+        env:
+          YOUTUBE_COOKIES: ${{ secrets.YOUTUBE_COOKIES }}
+        run: |
+          if [ -z "$YOUTUBE_COOKIES" ]; then
+            echo "ERROR: YouTube cookies secret is empty."
+            exit 1
+          fi
+
+          printf '%s' "$YOUTUBE_COOKIES" > "$RUNNER_TEMP/youtube-cookies.txt"
+          chmod 600 "$RUNNER_TEMP/youtube-cookies.txt"
+
       - name: Run automation
         env:
           INPUT_VIDEO_URL: ${{ github.event.inputs.video_url }}
           CLIP_COUNT: '20'
+          YOUTUBE_COOKIES_FILE: ${{ runner.temp }}/youtube-cookies.txt
         run: |
-          echo "Checking YouTube URL..."
           if [ -z "$INPUT_VIDEO_URL" ]; then
             echo "ERROR: No video URL supplied."
             exit 1
           fi
-          echo "Starting Gaming Shorts Automator..."
+
           python main.py
 
       - name: Upload generated clips
@@ -63,3 +75,8 @@ jobs:
             output/
           if-no-files-found: warn
           retention-days: 7
+
+      - name: Remove temporary cookies
+        if: always()
+        run: |
+          rm -f "$RUNNER_TEMP/youtube-cookies.txt"
