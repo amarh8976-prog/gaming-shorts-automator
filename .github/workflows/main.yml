@@ -2,19 +2,12 @@
 name: Gaming Shorts Automator
 
 on:
-  push:
-    branches:
-      - main
-
   workflow_dispatch:
     inputs:
       video_url:
         description: 'YouTube video URL'
         required: true
         type: string
-
-  schedule:
-    - cron: '0 12 * * *'
 
 jobs:
   run:
@@ -49,9 +42,15 @@ jobs:
 
       - name: Run automation
         env:
-          INPUT_VIDEO_URL: ${{ inputs.video_url }}
+          INPUT_VIDEO_URL: ${{ github.event.inputs.video_url }}
           CLIP_COUNT: '20'
         run: |
+          echo "Checking YouTube URL..."
+          if [ -z "$INPUT_VIDEO_URL" ]; then
+            echo "ERROR: No video URL supplied."
+            exit 1
+          fi
+          echo "Starting Gaming Shorts Automator..."
           python main.py
 
       - name: Upload generated clips
